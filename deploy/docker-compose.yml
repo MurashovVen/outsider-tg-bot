@@ -1,0 +1,7 @@
+services:
+  app:
+    build:
+      context: ../
+      dockerfile: deploy/app/Dockerfile
+    environment:
+      APP_TELEGRAM_BOT_TOKEN: "token" # todo hide on remote
