@@ -3,3 +3,6 @@ up:
 
 down:
 	docker-compose -f ./deploy/docker-compose.yml down
+
+lint:
+	golangci-lint run

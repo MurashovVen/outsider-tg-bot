@@ -72,22 +72,18 @@ func (b *Bot) processUpdate(upd tgbotapi.Update) error {
 func (b *Bot) processCallbackQuery(cd *tgbotapi.CallbackQuery) error {
 	switch {
 	case cd.Data == CallbackDataConfigureWhether:
-		buttons, err := callbackDataConfigureWhetherTemperatureCreateButtons(-40, 40)
-		if err != nil {
-			return fmt.Errorf("creating buttons callback data configure whether buttons: %w", err)
-		}
-
-		_, err = b.tg.Send(
+		_, err := b.tg.Send(
 			&tgbotapi.MessageConfig{
 				BaseChat: tgbotapi.BaseChat{
 					ChatID: cd.Message.Chat.ID,
 					ReplyMarkup: tgbotapi.InlineKeyboardMarkup{
-						InlineKeyboard: buttons,
+						InlineKeyboard: callbackDataConfigureWhetherTemperatureCreateButtons(),
 					},
 				},
 				Text: `Выберете критическое значение температуры`,
 			},
 		)
+
 		return err
 
 	case strings.Contains(cd.Data, CallbackDataConfigureWhetherTemperature):
@@ -99,6 +95,7 @@ func (b *Bot) processCallbackQuery(cd *tgbotapi.CallbackQuery) error {
 				Text: `Вы подписались на обновления и сконфигурировали критическую температуру. Спасибо)`,
 			},
 		)
+
 		return err
 
 	default:
@@ -151,6 +148,7 @@ func (b *Bot) sendStart(msg *tgbotapi.Message) error {
 			Text: `Что вы хотите сконфигурировать?`,
 		},
 	)
+
 	return err
 }
 
@@ -162,5 +160,6 @@ func (b *Bot) sendHelp(msg *tgbotapi.Message) error {
 		Text: `Список доступных комманд:
 /start - начать взаимодействие с ботом`,
 	})
+
 	return err
 }

@@ -11,18 +11,17 @@ var (
 	CallbackDataConfigureWhetherTemperature = "configure-whether-temperature"
 )
 
-func callbackDataConfigureWhetherTemperatureCreateButtons(from, to int) ([][]tgbotapi.InlineKeyboardButton, error) {
-	if from > to {
-		return nil, ErrInvalidInterval
-	}
-
+func callbackDataConfigureWhetherTemperatureCreateButtons() [][]tgbotapi.InlineKeyboardButton {
 	var (
 		rowLen = 5
+
+		from, to = -40, 40
 
 		res = make([][]tgbotapi.InlineKeyboardButton, 0, (to-from+1)/rowLen+1)
 
 		currRow = make([]tgbotapi.InlineKeyboardButton, 0, rowLen)
 	)
+
 	for ; from <= to; from++ {
 		cbData := CallbackDataConfigureWhetherTemperature + ":" + strconv.Itoa(from)
 		currRow = append(currRow,
@@ -39,5 +38,5 @@ func callbackDataConfigureWhetherTemperatureCreateButtons(from, to int) ([][]tgb
 		}
 	}
 
-	return res, nil
+	return res
 }
