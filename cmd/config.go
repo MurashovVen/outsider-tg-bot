@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	"tg-bot/pkg/app"
+	"github.com/MurashovVen/outsider-sdk/app"
 )
 
 type config struct {

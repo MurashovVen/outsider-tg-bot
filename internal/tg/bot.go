@@ -5,7 +5,7 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
-	"tg-bot/pkg/app/logger"
+	"github.com/MurashovVen/outsider-sdk/app/logger"
 )
 
 type (

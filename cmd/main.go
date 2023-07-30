@@ -5,13 +5,13 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/MurashovVen/outsider-sdk/app"
+	"github.com/MurashovVen/outsider-sdk/app/logger"
+	"github.com/MurashovVen/outsider-sdk/app/termination"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 
-	"tg-bot/pkg/app"
-	"tg-bot/pkg/app/logger"
-	"tg-bot/pkg/app/termination"
-	"tg-bot/pkg/tg"
+	"tg-bot/internal/tg"
 )
 
 func main() {

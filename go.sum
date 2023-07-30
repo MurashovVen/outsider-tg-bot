@@ -1,3 +1,5 @@
+github.com/MurashovVen/outsider-sdk v0.0.1 h1:liMTHyIPaI12NdCRUSMpYtHenDr8Ur0zISiO5ektcQw=
+github.com/MurashovVen/outsider-sdk v0.0.1/go.mod h1:DXolB9uPqevsPkKtyiPLh1NYml7kwuYOD0zNemd4cow=
 github.com/benbjohnson/clock v1.1.0 h1:Q92kusRqC1XV2MjkWETPvjJVqKetz1OzxZB7mHJLju8=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1 h1:wG8n/XJQ07TmjbITcGiUaOtXxdrINDz1b0J1w0SzqDc=
