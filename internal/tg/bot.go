@@ -1,10 +1,12 @@
 package tg
 
 import (
+	"context"
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
+	"github.com/MurashovVen/outsider-sdk/app"
 	"github.com/MurashovVen/outsider-sdk/app/logger"
 )
 
@@ -39,4 +41,18 @@ func BotWithLogger(logger *logger.Logger) BotOption {
 	return func(bot *Bot) {
 		bot.logger = logger.Named("TelegramBot")
 	}
+}
+
+var (
+	_ app.Work = (*Bot)(nil)
+)
+
+func (b *Bot) Runner(ctx context.Context) func() error {
+	return func() error {
+		return b.start(ctx)
+	}
+}
+
+func (b *Bot) Name() string {
+	return "TelegramBot"
 }

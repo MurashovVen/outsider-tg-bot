@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (b *Bot) Start(ctx context.Context) error {
+func (b *Bot) start(ctx context.Context) error {
 	b.logger.Debug("connecting")
 
 	if err := b.connect(); err != nil {
