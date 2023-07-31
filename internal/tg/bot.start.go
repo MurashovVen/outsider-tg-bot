@@ -2,9 +2,9 @@ package tg
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
+	whether "github.com/MurashovVen/outsider-proto/whether/golang"
+	"github.com/MurashovVen/outsider-sdk/entities"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"go.uber.org/zap"
 )
@@ -12,14 +12,8 @@ import (
 func (b *Bot) start(ctx context.Context) error {
 	b.logger.Debug("connecting")
 
-	if err := b.connect(); err != nil {
-		return err
-	}
-
 	updChan := b.tg.GetUpdatesChan(
 		tgbotapi.UpdateConfig{
-			Offset:  0,
-			Limit:   0,
 			Timeout: int(b.updateTimeout.Seconds()),
 		},
 	)
@@ -38,61 +32,35 @@ func (b *Bot) start(ctx context.Context) error {
 			return nil
 
 		case upd := <-updChan:
-			if err := b.processUpdate(upd); err != nil {
+			if err := b.processUpdate(ctx, upd); err != nil {
 				b.logger.Error("processing update", zap.Error(err))
 			}
 		}
 	}
 }
 
-func (b *Bot) connect() error {
-	tgBot, err := tgbotapi.NewBotAPI(b.token)
-	if err != nil {
-		return fmt.Errorf("подключение к апи: %w", err)
-	}
-
-	b.tg = tgBot
-
-	return nil
-}
-
-func (b *Bot) processUpdate(upd tgbotapi.Update) error {
+func (b *Bot) processUpdate(ctx context.Context, upd tgbotapi.Update) error {
 	switch {
 	case upd.Message != nil:
 		return b.processMessage(upd.Message)
 
 	case upd.CallbackQuery != nil:
-		return b.processCallbackQuery(upd.CallbackQuery)
+		return b.processCallbackQuery(ctx, upd.CallbackQuery)
 
 	default:
 		return ErrUnsupportedUpdate
 	}
 }
 
-func (b *Bot) processCallbackQuery(cd *tgbotapi.CallbackQuery) error {
+func (b *Bot) processCallbackQuery(ctx context.Context, cd *tgbotapi.CallbackQuery) error {
+	action := entities.ActionTypeParseString(cd.Data)
+
 	switch {
-	case cd.Data == CallbackDataConfigureWhether:
-		_, err := b.tg.Send(
-			&tgbotapi.MessageConfig{
-				BaseChat: tgbotapi.BaseChat{
-					ChatID: cd.Message.Chat.ID,
-					ReplyMarkup: tgbotapi.InlineKeyboardMarkup{
-						InlineKeyboard: callbackDataConfigureWhetherTemperatureCreateButtons(),
-					},
-				},
-				Text: `Выберете критическое значение температуры`,
-			},
-		)
-
-		return err
-
-	case strings.Contains(cd.Data, CallbackDataConfigureWhetherTemperature):
-		_, err := b.tg.Send(
-			&tgbotapi.MessageConfig{
-				BaseChat: tgbotapi.BaseChat{
-					ChatID: cd.Message.Chat.ID,
-				},
-				Text: `Вы подписались на обновления и сконфигурировали критическую температуру. Спасибо)`,
+	case action.IsWhetherType():
+		_, err := b.whetherService.ActionProcess(ctx,
+			&whether.ActionProcessRequest{
+				FromChatId: cd.Message.Chat.ID,
+				Action:     cd.Data,
 			},
 		)
 
@@ -129,7 +97,10 @@ func (b *Bot) processCommand(msg *tgbotapi.Message) error {
 	}
 }
 
+// todo вынести в сервис тоже
 func (b *Bot) sendStart(msg *tgbotapi.Message) error {
+	cbData := entities.ActionWhetherConfigure
+
 	_, err := b.tg.Send(
 		&tgbotapi.MessageConfig{
 			BaseChat: tgbotapi.BaseChat{
@@ -139,7 +110,7 @@ func (b *Bot) sendStart(msg *tgbotapi.Message) error {
 						{
 							{
 								Text:         "Сконфигурировать погоду",
-								CallbackData: &CallbackDataConfigureWhether,
+								CallbackData: &cbData,
 							},
 						},
 					},

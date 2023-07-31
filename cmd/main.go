@@ -4,10 +4,13 @@ import (
 	"context"
 	"errors"
 
+	whether "github.com/MurashovVen/outsider-proto/whether/golang"
 	"github.com/MurashovVen/outsider-sdk/app"
 	"github.com/MurashovVen/outsider-sdk/app/configuration"
 	"github.com/MurashovVen/outsider-sdk/app/logger"
 	"github.com/MurashovVen/outsider-sdk/app/termination"
+	"github.com/MurashovVen/outsider-sdk/grpc"
+	tgclient "github.com/MurashovVen/outsider-sdk/tg"
 	"go.uber.org/zap"
 
 	"tg-bot/internal/tg"
@@ -17,14 +20,20 @@ func main() {
 	cfg := new(config)
 	configuration.MustProcessConfig(cfg)
 
-	log := logger.MustCreateLogger(cfg.Env)
+	var (
+		log = logger.MustCreateLogger(cfg.Env)
+
+		telegramClient = tgclient.MustCreateAndConnect(cfg.TelegramBotToken)
+
+		whetherClientConn = grpc.MustConnect(cfg.WhetherGRPCClientAddr, grpc.DefaultDialOptions(log)...)
+	)
 
 	application := app.New(
 		log,
 		app.AppendWorks(
 			tg.New(
-				cfg.TelegramBotToken,
-				cfg.TelegramBotUpdateTimeout,
+				telegramClient,
+				whether.NewWhetherClient(whetherClientConn),
 				tg.BotWithLogger(log),
 			),
 		),

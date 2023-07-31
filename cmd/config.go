@@ -8,7 +8,8 @@ import (
 
 type config struct {
 	configuration.Default
+	configuration.TelegramClient
 
-	TelegramBotToken         string        `desc:"Auth token" split_words:"true"`
-	TelegramBotUpdateTimeout time.Duration `desc:"Timeout for long polling" default:"0s" split_words:"true" `
+	WhetherGRPCClientAddr    string        `desc:"Address of whether service" default:"whether:5000" split_words:"true"`
+	TelegramBotUpdateTimeout time.Duration `desc:"Timeout for long polling" default:"0s" split_words:"true"`
 }

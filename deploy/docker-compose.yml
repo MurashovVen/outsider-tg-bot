@@ -1,5 +1,5 @@
 services:
-  app:
+  tg-bot:
     env_file:
       - app/.env.secure
     build:
@@ -7,3 +7,9 @@ services:
       dockerfile: deploy/app/Dockerfile
     volumes:
       - ../:/app
+    networks:
+      - outsider
+
+networks:
+  outsider:
+    external: true
