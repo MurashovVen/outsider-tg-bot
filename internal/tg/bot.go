@@ -4,30 +4,32 @@ import (
 	"context"
 	"time"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-
 	"github.com/MurashovVen/outsider-sdk/app"
 	"github.com/MurashovVen/outsider-sdk/app/logger"
+	"github.com/MurashovVen/outsider-sdk/tg"
+
+	whether "github.com/MurashovVen/outsider-proto/whether/golang"
 )
 
 type (
 	Bot struct {
-		tg *tgbotapi.BotAPI
+		tg *tg.Client
+
+		whetherService whether.WhetherClient
 
 		logger *logger.Logger
 
-		token         string
 		updateTimeout time.Duration
 	}
 
 	BotOption func(*Bot)
 )
 
-func New(token string, updateTimeout time.Duration, options ...BotOption) *Bot {
+func New(tg *tg.Client, whetherService whether.WhetherClient, options ...BotOption) *Bot {
 	b := &Bot{
-		token:         token,
-		updateTimeout: updateTimeout,
-		logger:        logger.NewNop(),
+		tg:             tg,
+		whetherService: whetherService,
+		logger:         logger.NewNop(),
 	}
 
 	for _, opt := range options {

@@ -6,3 +6,12 @@ down:
 
 lint:
 	golangci-lint run
+
+go-mod:
+	go mod download && go mod tidy
+
+
+test:
+	go test ./...
+
+pre-push: go-mod test lint
